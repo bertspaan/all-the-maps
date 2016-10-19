@@ -51,7 +51,19 @@ function drawMap(d, i) {
   		.enter().append('path')
   		.attr('d', p)
   } else {
-    d3.select(this)
-      .style('background-color', 'red')
+    var svg = d3.select(this)
+      .attr('class', 'error')
+
+    svg.append('line')
+      .attr('x1', 10)
+      .attr('y1', 10)
+      .attr('x2', 90)
+      .attr('y2', 90)
+
+    svg.append('line')
+      .attr('x1', 10)
+      .attr('y1', 90)
+      .attr('x2', 90)
+      .attr('y2', 10)
   }
 }

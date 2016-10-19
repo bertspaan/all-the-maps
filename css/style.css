@@ -60,3 +60,10 @@ body {
 #maps li:nth-child(odd) svg path {
   stroke: #0000B2;
 }
+
+.error line {
+  stroke: red;
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
