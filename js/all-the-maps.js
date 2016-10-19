@@ -39,13 +39,19 @@ function drawMap(d, i) {
     (height - s * (b[1][1] + b[0][1])) / 2
   ]
 
-  mercator.scale(s).translate(t);
+  mercator.scale(s).translate(t)
 
-  d3.select(this)
-		.selectAll('path')
-		.data([map])
-		.enter().append('path')
-		.attr('d', path)
-    // .attr("class", function(d, i) { return "color" + (i + 1); })
-    // .style("stroke-width", function(d, i) { return ((strokes.length - i) * 2 - 1) * strokeWidth; });
+  var p = path(d)
+  var containsNaN = p.indexOf('NaN') > -1
+
+  if (!containsNaN) {
+    d3.select(this)
+  		.selectAll('path')
+  		.data([map])
+  		.enter().append('path')
+  		.attr('d', p)
+  } else {
+    d3.select(this)
+      .style('background-color', 'red')
+  }
 }
