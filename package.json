@@ -1,0 +1,16 @@
+{
+  "name": "all-the-maps",
+  "version": "1.0.0",
+  "description": "psql -h localhost -d histograph -U postgres -f query.sql -t > maps.csv",
+  "main": "convert.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Bert Spaan",
+  "license": "MIT",
+  "dependencies": {
+    "highland": "^2.10.0",
+    "minimist": "^1.2.0",
+    "ramda": "^0.22.1"
+  }
+}

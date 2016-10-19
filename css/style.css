@@ -1,0 +1,51 @@
+body, ol, li {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: black;
+}
+
+#maps {
+  list-style: none;
+}
+
+#maps li {
+  float: left;
+  width: 20%;
+  display: inline-block;
+  position: relative;
+  padding-bottom: 20%;
+  margin: 0;
+}
+
+#maps li a {
+  top: 0;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+}
+
+#maps li svg path {
+  fill: none;
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+#maps li:nth-child(even) {
+  background-color: #0000B2;
+}
+
+#maps li:nth-child(even) svg path {
+  stroke: #FFE25E;
+}
+
+#maps li:nth-child(odd) {
+  background-color: #FFE25E;
+}
+
+#maps li:nth-child(odd) svg path {
+  stroke: #0000B2;
+}
