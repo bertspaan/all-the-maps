@@ -17,6 +17,8 @@ d3.json('data/maps.json', function (geojson) {
       .attr('width', '100%')
       .attr('viewBox', '0 0 100 100')
       .each(drawMap)
+
+  d3.select('#loading').remove()
 })
 
 function drawMap(d, i) {
