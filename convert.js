@@ -9,7 +9,9 @@ H(stream)
   .split()
   .compact()
   .map(R.split('|'))
+  .map(R.map(R.trim))
   .map(R.zipObj(['id', 'geometry']))
+  .filter((map) => map.id && map.geometry)
   .map((map) => ({
     id: map.id.trim().split('/')[1],
     geometry: JSON.parse(map.geometry)
@@ -25,5 +27,5 @@ H(stream)
     console.log(JSON.stringify({
       type: 'FeatureCollection',
       features: maps
-    }, null, 2))
+    }))
   })
