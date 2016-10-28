@@ -10,16 +10,20 @@ H(stream)
   .compact()
   .map(R.split('|'))
   .map(R.map(R.trim))
-  .map(R.zipObj(['id', 'geometry']))
+  .map(R.zipObj(['id', 'uuid', 'name', 'geometry']))
   .filter((map) => map.id && map.geometry)
   .map((map) => ({
     id: map.id.trim().split('/')[1],
+    uuid: map.uuid.trim(),
+    name: map.name.trim(),
     geometry: JSON.parse(map.geometry)
   }))
   .map((map) => ({
     type: 'Feature',
     properties: {
-      id: map.id
+      id: map.id,
+      uuid: map.uuid,
+      name: map.name
     },
     geometry: map.geometry
   }))

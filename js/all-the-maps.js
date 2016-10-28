@@ -4,19 +4,92 @@ var mercator = d3.geoProjection(function (x, y) {
 
 var path = d3.geoPath().projection(mercator)
 
-d3.json('data/maps.json', function (geojson) {
-  var maps = d3.select('#maps').selectAll('li').data(geojson.features)
-    .enter().append('li')
+var geojson = {}
 
-  var svg = maps
+function updateMaps(features) {
+  console.log(features[0].properties.id, features[0].properties.name)
+  var maps = d3.select('#maps').selectAll('li')
+    .data(features, function (d) {
+      return d.properties.id + Math.floor(Date.now() / 1000)
+
+    })
+
+  var newMaps = maps.enter().append('li')
+
+  console.log('Enter:', maps.enter().size())
+  console.log('Update:', maps.size())
+  console.log('Exit:', maps.exit().size())
+
+
+  maps.exit().remove()
+
+  newMaps
     .append('a')
       .attr('href', function (d) {
-        return 'http://maps.nypl.org/warper/maps/' + d.properties.id
+        return 'http://digitalcollections.nypl.org/items/' + d.properties.uuid
+        // return 'http://maps.nypl.org/warper/maps/' + d.properties.id
       })
     .append('svg')
       .attr('width', '100%')
       .attr('viewBox', '0 0 100 100')
       .each(drawMap)
+
+  newMaps
+    .append('div')
+      .attr('class', 'title-container')
+    .append('span')
+      .attr('class', 'title')
+      .text(function (d) {
+        return d.properties.name
+      })
+
+}
+
+d3.json('data/maps.json', function (newGeojson) {
+  geojson = newGeojson
+  updateMaps(geojson.features)
+
+  d3.select('#map-count')
+    .text(geojson.features.length)
+
+  var sortLinks = [
+    {
+      text: 'number of vertices',
+      sort: function (a, b) {
+        return -1
+      }
+    },
+    {
+      text: 'name',
+      sort: function (a, b) {
+        return a.properties.name < b.properties.name ? -1 : 1
+      }
+    },
+    {
+      text: 'error',
+      sort: function (a, b) {
+        return -1
+      }
+    },
+    {
+      text: 'ID',
+      sort: function (a, b) {
+        return 1
+      }
+    }
+  ]
+
+  d3.select('#sort-links').selectAll('li').data(sortLinks)
+    .enter().append('li')
+      .append('a')
+      .attr('href', 'javascript:void(0);')
+      .text(function (d) {
+        return d.text
+      })
+      .on('click', function(d) {
+        geojson.features = geojson.features.slice().sort(d.sort)
+        updateMaps(geojson.features)
+      })
 
   d3.select('#loading').remove()
 })

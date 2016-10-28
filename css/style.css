@@ -4,18 +4,30 @@ body, ol, li {
 }
 
 body {
-  background-color: #FFE25E;
+  background-color: black;
   font-family: monospace;
   font-size: 24px;
 }
 
+body, a, a:visited {
+  color: white;
+}
+
 #loading {
+  top: 0;
+  background-color: black;
   position: absolute;
   width: 100%;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+article .text {
+  width: 60%;
+  margin: 2em auto;
+  text-align: center;
 }
 
 #maps {
@@ -29,6 +41,51 @@ body {
   position: relative;
   padding-bottom: 20%;
   margin: 0;
+}
+
+#maps li .title-container {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1em;
+  box-sizing: border-box;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+#maps li .title {
+  /*text-shadow: 0 0 5px white;*/
+
+  display: none;
+  text-align: center;
+  font-size: 66.66%;
+}
+
+#maps li:hover .title {
+  display: block;
+}
+
+#sort-links {
+  display: inline;
+}
+
+#sort-links li {
+  display: inline;
+}
+
+#sort-links li::after {
+  content: ', ';
+}
+
+#sort-links li:nth-last-child(2):after {
+  content: ' or ';
+}
+
+#sort-links li:last-child:after {
+  content: '';
 }
 
 #maps li a {
@@ -45,20 +102,41 @@ body {
   stroke-linecap: round;
 }
 
+#maps li .title {
+  background-color: rgba(0, 0, 0, 0.2);
+  color: white;
+  text-shadow: black 1px 0px 1px, black -1px 0px 1px, black 0px 1px 1px, black 0px -1px 1px;
+  padding: 0.5em;
+  /*display: inline-block;*/
+}
+/*
+#maps li:nth-child(odd) .title {
+  color: black;
+  text-shadow: white 1px 0px 1px, white -1px 0px 1px, white 0px 1px 1px, white 0px -1px 1px;
+}*/
+
 #maps li:nth-child(even) {
-  background-color: #0000B2;
+  /*background-color: #0000B2;*/
+  /*background-color: #B23A1A;*/
+  background-color: white;
 }
 
 #maps li:nth-child(even) svg path {
-  stroke: #FFE25E;
+  /*stroke: #FFE25E;*/
+  /*stroke: #FE5325;*/
+  stroke: black;
 }
 
 #maps li:nth-child(odd) {
-  background-color: #FFE25E;
+  /*background-color: #FFE25E;*/
+  /*background-color: #FE5325;*/
+  background-color: black;
 }
 
 #maps li:nth-child(odd) svg path {
-  stroke: #0000B2;
+  /*stroke: #0000B2;*/
+  /*stroke: #B23A1A;*/
+  stroke: white;
 }
 
 .error line {
@@ -67,3 +145,11 @@ body {
   stroke-linejoin: round;
   stroke-linecap: round;
 }
+
+/*#maps li:nth-child(even) .error line {
+  stroke: black;
+}
+
+#maps li:nth-child(odd) .error line {
+  stroke: white;
+}*/
