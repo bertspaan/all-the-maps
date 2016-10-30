@@ -5,21 +5,48 @@ var mercator = d3.geoProjection(function (x, y) {
 var path = d3.geoPath().projection(mercator)
 
 var geojson = {}
+var currentMap
+var timer
+var sortField = 0
+var sortOrder = 1
+
+function geometryToPath (geometry) {
+  var width = 100
+  var height = 100
+
+  mercator.scale(1).translate([0, 0])
+
+  var b = path.bounds(geometry)
+  var s = .90 / Math.max(
+    (b[1][0] - b[0][0]) / (width),
+    (b[1][1] - b[0][1]) / (height)
+  )
+  var t = [
+    (width - s * (b[1][0] + b[0][0])) / 2,
+    (height - s * (b[1][1] + b[0][1])) / 2
+  ]
+
+  mercator.scale(s).translate(t)
+
+  var p = path(geometry)
+  var containsNaN = p.indexOf('NaN') > -1
+
+  if (!containsNaN) {
+    return p
+  } else {
+    return undefined
+  }
+}
 
 function updateMaps(features) {
-  console.log(features[0].properties.id, features[0].properties.name)
+  d3.select('#maps').selectAll('li').remove()
+
   var maps = d3.select('#maps').selectAll('li')
     .data(features, function (d) {
-      return d.properties.id + Math.floor(Date.now() / 1000)
-
+      return d.properties.id
     })
 
   var newMaps = maps.enter().append('li')
-
-  console.log('Enter:', maps.enter().size())
-  console.log('Update:', maps.size())
-  console.log('Exit:', maps.exit().size())
-
 
   maps.exit().remove()
 
@@ -35,6 +62,43 @@ function updateMaps(features) {
       .each(drawMap)
 
   newMaps
+    .on('mouseenter', function (d) {
+      if (currentMap !== d.properties.id) {
+        var li = this
+
+        if (timer) {
+          window.clearTimeout(timer)
+        }
+
+        timer = window.setTimeout(function() {
+          var src = 'http://images.nypl.org/index.php?id=' + d.properties.imageId + '&t=w'
+          d3.select(li)
+            .append('div')
+              .attr('class', 'image')
+              .style('background-image', 'url(' + src + ')')
+
+          window.setTimeout(function() {
+            d3.select(li).select('.image')
+              .style('left', 0)
+          }, 250)
+
+        }, 1000)
+
+        currentMap = d.properties.id
+      }
+
+    })
+    .on('mouseleave', function (d) {
+      currentMap = undefined
+
+      if (timer) {
+        window.clearTimeout(timer)
+        timer = undefined
+      }
+      d3.select(this).select('.image').remove()
+    })
+
+  newMaps
     .append('div')
       .attr('class', 'title-container')
     .append('span')
@@ -47,6 +111,21 @@ function updateMaps(features) {
 
 d3.json('data/maps.json', function (newGeojson) {
   geojson = newGeojson
+
+  function countVertices (geometry) {
+    return [geometry.coordinates[0]].reduce(function(a, b) {
+      return a.concat(b)
+    }, []).length
+  }
+
+  geojson.features = geojson.features.map(function (feature) {
+    feature.properties.vertices = countVertices(feature.geometry)
+    feature.properties.path = geometryToPath(feature.geometry)
+    feature.properties.error = feature.properties.path ? false : true
+
+    return feature
+  })
+
   updateMaps(geojson.features)
 
   d3.select('#map-count')
@@ -56,7 +135,7 @@ d3.json('data/maps.json', function (newGeojson) {
     {
       text: 'number of vertices',
       sort: function (a, b) {
-        return -1
+        return a.properties.vertices > b.properties.vertices ? -1 : 1
       }
     },
     {
@@ -68,13 +147,13 @@ d3.json('data/maps.json', function (newGeojson) {
     {
       text: 'error',
       sort: function (a, b) {
-        return -1
+        return a.properties.error < b.properties.error ? -1 : 1
       }
     },
     {
       text: 'ID',
       sort: function (a, b) {
-        return 1
+        return a.properties.id < b.properties.id ? -1 : 1
       }
     }
   ]
@@ -86,43 +165,32 @@ d3.json('data/maps.json', function (newGeojson) {
       .text(function (d) {
         return d.text
       })
-      .on('click', function(d) {
-        geojson.features = geojson.features.slice().sort(d.sort)
+      .on('click', function(d, i) {
+        if (i === sortField) {
+          sortOrder = sortOrder * -1
+        } else {
+          sortOrder = 1
+        }
+
+        sortField = i
+
+        geojson.features = geojson.features.slice().sort(function (a, b) {
+          return d.sort(a, b) * sortOrder
+        })
+
         updateMaps(geojson.features)
       })
 
   d3.select('#loading').remove()
 })
 
-function drawMap(d, i) {
-  var map = d.geometry
-
-  var width = 100
-  var height = 100
-
-  mercator.scale(1).translate([0, 0])
-
-  var b = path.bounds(map)
-  var s = .90 / Math.max(
-    (b[1][0] - b[0][0]) / (width),
-    (b[1][1] - b[0][1]) / (height)
-  )
-  var t = [
-    (width - s * (b[1][0] + b[0][0])) / 2,
-    (height - s * (b[1][1] + b[0][1])) / 2
-  ]
-
-  mercator.scale(s).translate(t)
-
-  var p = path(d)
-  var containsNaN = p.indexOf('NaN') > -1
-
-  if (!containsNaN) {
+function drawMap(d) {
+  if (d.properties.path) {
     d3.select(this)
   		.selectAll('path')
-  		.data([map])
+  		.data([d.geometry])
   		.enter().append('path')
-  		.attr('d', p)
+  		.attr('d', d.properties.path)
   } else {
     var svg = d3.select(this)
       .attr('class', 'error')

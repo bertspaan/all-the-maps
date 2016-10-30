@@ -1,6 +1,7 @@
 SELECT
   id,
   data->>'uuid' AS uuid,
+  data->>'nyplDigitalId' AS image_id,
   name,
   ST_AsGeoJSON(
     ST_SimplifyPreserveTopology(geometry, 0.0001),

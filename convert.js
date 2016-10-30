@@ -10,11 +10,12 @@ H(stream)
   .compact()
   .map(R.split('|'))
   .map(R.map(R.trim))
-  .map(R.zipObj(['id', 'uuid', 'name', 'geometry']))
+  .map(R.zipObj(['id', 'uuid', 'image_id', 'name', 'geometry']))
   .filter((map) => map.id && map.geometry)
   .map((map) => ({
     id: map.id.trim().split('/')[1],
     uuid: map.uuid.trim(),
+    imageId: map.image_id.trim(),
     name: map.name.trim(),
     geometry: JSON.parse(map.geometry)
   }))
@@ -23,6 +24,7 @@ H(stream)
     properties: {
       id: map.id,
       uuid: map.uuid,
+      imageId: map.imageId,
       name: map.name
     },
     geometry: map.geometry

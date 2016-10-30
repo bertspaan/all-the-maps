@@ -30,6 +30,10 @@ article .text {
   text-align: center;
 }
 
+.x {
+  color: red;
+}
+
 #maps {
   list-style: none;
 }
@@ -41,6 +45,22 @@ article .text {
   position: relative;
   padding-bottom: 20%;
   margin: 0;
+  overflow: hidden;
+}
+
+#maps li .image {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+
+  transition: left 1s;
+  transition-timing-function: linear;
+
+  left: -100%;
+  pointer-events: none;
 }
 
 #maps li .title-container {
