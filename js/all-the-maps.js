@@ -84,7 +84,7 @@ function updateMaps(features) {
               .style('left', 0)
           }, 250)
 
-        }, 500)
+        }, 250)
 
         currentMap = d.properties.id
       }
