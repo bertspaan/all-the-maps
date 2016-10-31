@@ -62,6 +62,8 @@ function updateMaps(features) {
       .each(drawMap)
 
   newMaps
+    .append('div')
+      .attr('class', 'image-container')
     .on('mouseenter', function (d) {
       if (currentMap !== d.properties.id) {
         var li = this
@@ -82,7 +84,7 @@ function updateMaps(features) {
               .style('left', 0)
           }, 250)
 
-        }, 1000)
+        }, 500)
 
         currentMap = d.properties.id
       }
@@ -104,9 +106,16 @@ function updateMaps(features) {
     .append('span')
       .attr('class', 'title')
       .text(function (d) {
-        return d.properties.name
+        var MAX_WORDS = 10
+        var title
+        var words = d.properties.name.split(' ')
+        if (words.length > MAX_WORDS) {
+          title = words.slice(0, MAX_WORDS).join(' ') + ' …'
+        } else {
+          title = words.join(' ')
+        }
+        return title
       })
-
 }
 
 d3.json('data/maps.json', function (newGeojson) {
