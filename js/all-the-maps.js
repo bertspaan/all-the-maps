@@ -64,7 +64,8 @@ function updateMaps(features) {
   newMaps
     .append('div')
       .attr('class', 'image-container')
-    .on('mouseenter', function (d) {
+
+  newMaps.on('mouseenter', function (d) {
       if (currentMap !== d.properties.id) {
         var li = this
 
@@ -72,14 +73,14 @@ function updateMaps(features) {
           window.clearTimeout(timer)
         }
 
-        timer = window.setTimeout(function() {
+        timer = window.setTimeout(function () {
           var src = 'http://images.nypl.org/index.php?id=' + d.properties.imageId + '&t=w'
-          d3.select(li)
+          d3.select(li).select('.image-container')
             .append('div')
               .attr('class', 'image')
               .style('background-image', 'url(' + src + ')')
 
-          window.setTimeout(function() {
+          window.setTimeout(function () {
             d3.select(li).select('.image')
               .style('left', 0)
           }, 250)
@@ -88,7 +89,6 @@ function updateMaps(features) {
 
         currentMap = d.properties.id
       }
-
     })
     .on('mouseleave', function (d) {
       currentMap = undefined
